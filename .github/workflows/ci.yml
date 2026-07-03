@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1 - Download your code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2 - Install Rust
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      # Step 3 - Build the project
+      - name: Build
+        run: cargo build --release
+
+      # Step 4 - Run tests
+      - name: Test
+        run: cargo test
