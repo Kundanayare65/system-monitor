@@ -22,10 +22,17 @@ async fn metrics() -> String {
 
 #[tokio::main]
 async fn main() {
+    // Read PORT from environment — Railway sets this automatically
+    // If no PORT set, default to 3000 for local development
+    let port = std::env::var("PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse::<u16>()
+        .unwrap();
+
     let app = Router::new().route("/metrics", get(metrics));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Server running at http://localhost:3000/metrics");
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    println!("Server running on port {}", port);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
