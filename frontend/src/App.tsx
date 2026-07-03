@@ -10,7 +10,7 @@ function App() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/metrics")
+    fetch("/metrics")
       .then((res) => res.json())
       .then((data) => setMetrics(data))
       .catch((err) => console.error(err));
