@@ -1,11 +1,12 @@
-FROM rust:1.77 AS builder
+FROM rust:1.89 AS builder
 
 WORKDIR /app
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     libssl-dev \
-    pkg-config
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
