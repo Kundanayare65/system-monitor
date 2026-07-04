@@ -3,7 +3,7 @@ FROM rust:1.77 as builder
 WORKDIR /app
 
 # Install openssl-dev for sysinfo
-RUN apt-get update && apt-get install -y openssl-dev
+RUN apt-get update && apt-get install -y libssl-dev pkg-config
 
 COPY . .
 
