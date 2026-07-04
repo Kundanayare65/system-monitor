@@ -1,25 +1,31 @@
-# Stage 1 — Build the Rust app
-FROM rust:latest AS builder
+FROM rust:1.77 as builder
 
-# Create a working directory inside the container
 WORKDIR /app
 
-# Copy your project files into the container
+# Install openssl-dev for sysinfo
+RUN apt-get update && apt-get install -y openssl-dev
+
 COPY . .
 
-# Compile the Rust app in release mode (faster, smaller binary)
+# Build the Rust backend
 RUN cargo build --release
 
-# Stage 2 — Create a small final image with just the binary
+# Build the React frontend
+WORKDIR /app/frontend
+RUN npm install
+RUN npm run build
+
+# Final stage
 FROM debian:bookworm-slim
 
 WORKDIR /app
 
-# Copy only the compiled binary from stage 1
+# Install openssl-dev for sysinfo (runtime dependency)
+RUN apt-get update && apt-get install -y openssl
+
 COPY --from=builder /app/target/release/system-monitor .
+COPY --from=builder /app/frontend/dist ./frontend/dist
 
-# Tell Docker this app runs on port 3000
-EXPOSE 3000
+EXPOSE $PORT
 
-# Run the app when container starts
 CMD ["./system-monitor"]
